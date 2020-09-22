@@ -5,17 +5,15 @@
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 
 <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css" />
-<link href="css/pages-new.css" rel="stylesheet" type="text/css" >
-<link href="css/pages1.css" rel="stylesheet" type="text/css" />
+<link href="css/pages-new.css" rel="stylesheet" type="text/css" id="pages" >
+<link href="css/pages1.css" rel="stylesheet" type="text/css" id="page1"/>
 <link href="css/jquery-ui.css" rel="stylesheet" type="text/css" />
-<link href="css/jquery.dataTables.min.css" rel="stylesheet" type="text/css" />
+<link href="css/jquery.dataTables.min.css" rel="stylesheet" type="text/css" id= "jquery-dataTables" />
 <link href="css/buttons.dataTables.min.css" rel="stylesheet" type="text/css" />
-<link href="css/jquery.dataTables.min.css" rel="stylesheet" type="text/css" />
 <link href="css/select2.css" rel="stylesheet" type="text/css" />
 
 <link href="css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
 <link href="css/fonts-googleapis.css" rel="stylesheet" type="text/css"/>
-
 
 <style type="text/css">
 .header-color {
@@ -30,9 +28,11 @@
 </style>
 </head>
 
+
+
 <script type="text/javascript" src="js/jquery-3.4.1.min.js"></script>
 <script type="text/javascript" src="js/bootstrap.min.js"></script>
-<script type="text/javascript" src="js/datatables.min.js"></script>
+<script type="text/javascript" src="js/datatables.min.js"></script> 
 <script type="text/javascript" src="js/jquery-ui.js"></script>
 <script type="text/javascript" src="js/report.js"></script>
 <script type="text/javascript" src="js/canvasjs.min.js"></script>
