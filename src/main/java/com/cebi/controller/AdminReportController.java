@@ -9,11 +9,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
@@ -37,8 +34,10 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.cebi.dao.AdminReportDao;
 import com.cebi.entity.Banks;
@@ -452,16 +451,19 @@ public class AdminReportController {
     }
 
     @RequestMapping(value = MappingConstant.SHOW_FAVOURITE_LIST, method = RequestMethod.GET)
-    public ModelAndView savefavouriteQuery(HttpServletRequest request) {
+    public ModelAndView savefavouriteQuery(HttpServletRequest request,@ModelAttribute("deleteSuccess") String deleteSuccess,@ModelAttribute("deleteFailed") String deleteFailed,Model mdl) {
 	ModelAndView model = new ModelAndView();
 	model.setViewName("favouritelist");
 	HttpSession session = request.getSession();
 	String bankCode = (String) session.getAttribute(CebiConstant.BANK_CODE);
 	List<QueryData> list = adminReportDao.retrieveFavouriteList(bankCode);
-	if (list != null && !list.isEmpty())
+	if (list != null && !list.isEmpty()){
+		mdl.addAttribute("deleteSuccess",deleteSuccess);
+	    mdl.addAttribute("deleteFailed", deleteFailed);
 	    model.addObject("favouriteLists", list);
-	else
+	}else{
 	    model.addObject("nocontent", "No Content..!");
+	}
 	return model;
 
     }
@@ -548,4 +550,21 @@ public class AdminReportController {
     	logger.info("exit from chkbankcode");
     	return map;
     }
+    
+    @RequestMapping(value = "/deleteFav", method=RequestMethod.GET)
+    public String deleteFavourite( @RequestParam(value = "id", required = false) int id,Model model,RedirectAttributes redirectAttrs) {
+    int deleteFavRec = adminReportDao.deleteFavRec(id);
+    if(deleteFavRec==1){
+    	System.out.println("deleted successfully");
+    	redirectAttrs.addFlashAttribute("deleteSuccess", "Record deleted successfully");
+    }
+    else {
+    	System.out.println("delete failed");
+    	redirectAttrs.addFlashAttribute("deleteFailed", "Record deleted Failed");
+
+    }
+  
+    return "redirect:/showFavouriteList";
+    }
+    
 }

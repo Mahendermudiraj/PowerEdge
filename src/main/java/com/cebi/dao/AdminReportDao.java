@@ -51,4 +51,6 @@ public interface AdminReportDao {
 
 	public  LinkedHashMap<String, Integer> getTotalCount(String bankCode);
 
+	public int deleteFavRec(int id);
+
 }

@@ -57,7 +57,7 @@ table.dataTable tbody th, table.dataTable tbody td {
 /* 	background: #f7f7f7; */
 	border-bottom: 1px solid #ccc;
 	font-weight: 400;
-	  border: 1px solid #dee2e6 !important;
+	  //border: 1px solid #dee2e6 !important;
 }
 .table-bordered th, .table-bordered td {
     border: 1px solid #dee2e6 !important;

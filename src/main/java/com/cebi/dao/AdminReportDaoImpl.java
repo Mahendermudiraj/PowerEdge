@@ -776,4 +776,13 @@ public class AdminReportDaoImpl extends PdfUtils implements AdminReportDao {
 		
 	}
 
+
+	@Override
+	public int deleteFavRec(int id) {
+    	Query query = sessionFactory.getCurrentSession().createQuery("delete from QueryData qd  where qd.id=:id");
+    	query.setParameter("id", id);
+    	int executeUpdate = query.executeUpdate();
+		return executeUpdate;
+	}
+
 }

@@ -1,13 +1,6 @@
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
+<title>Favourite List</title>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>favourite List</title>
 <%@ include file="header.jsp" %>
-<!-- <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css" />
-<link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">-->
 <link href="css/style.css" rel="stylesheet" type="text/css" /> 
 <style type="text/css">
  .hidebar{
@@ -16,13 +9,33 @@ display:none;
 .container-fluid{
 margin-top:8% !important;
 }
+form {
+    margin-left: 0px !important; 
+}
+.table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th {
+    border: 1px solid #8f8989;
+}
+.table tbody tr td {
+    padding: 6px !important;
+}
+.alert {
+	width: 300px;
+	color: green;
+	margin-left: 60px;
+	position: fixed;
+	top: 85px;
+	right: 30px;
+	z-index: 9999;
+	height: 25px;
+}
+
 </style>
 </head>
 <body>
 	<div class="report_bg_patch">
-
+	<div class="alert alert-success" id="deleteSuccess" >${deleteSuccess }</div>
 		<div class="">
-			<h2 style="color: black; font-size: 28px; text-align: left;">
+			<h2 style="color: black; font-size: 28px; text-align: left; margin-left: 15px;">
 					<i class="glyphicon glyphicon-star-empty"></i>&nbsp;&nbsp;User Favourite List
 				</h2>
 				<div class="scrollable1">
@@ -31,6 +44,7 @@ margin-top:8% !important;
 				<table class="table" style="color: #000;">
 					<thead>
 						<tr>
+						    <th style="color:white;font-size:11px">ID</th>
 							<th style="color:white;font-size:11px">Title</th>
 							<th style="color:white;font-size:11px">Purpose</th>
 							<th style="color:white;font-size:11px">Description</th>
@@ -39,11 +53,13 @@ margin-top:8% !important;
 							<th style="color:white;font-size:11px">Filter</th>
 							<th style="color:white;font-size:11px">Date</th>
 							<th style="color:white;font-size:11px">Action</th>
+							<th style="color:white;font-size:11px">Delete</th>
 						</tr>
 					</thead>
 					<tbody>
 						<c:forEach items="${favouriteLists}" var="table">
 							<tr>
+							    <td>${table.id}</td>
 								<td>${table.qryTitle}</td>
 								<td>${table.purpose}</td>
 								<td>${table.description}</td>
@@ -59,6 +75,10 @@ margin-top:8% !important;
 										</button>
 									</form>
 								</td>
+								<td>
+								  <a href="${pageContext.request.contextPath}/deleteFav?id=${table.id}" OnClick ="return confirm('Do you want to Delete?')" >
+								  <span class='fa fa-trash' aria-hidden='true'></span></a>
+							</td>
 							</tr>
 						</c:forEach>
 					</tbody>
@@ -83,6 +103,8 @@ margin-top:8% !important;
 				localStorage.setItem("parameter", parameter);
 				$('#reportdetailsForm').submit();
 			});
+			setTimeout(function(){
+				$('#deleteSuccess').fadeOut("slow");}, 5000);
 		});
 	</script>
 </body>
