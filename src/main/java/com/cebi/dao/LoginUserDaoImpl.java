@@ -10,15 +10,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
-
-
-
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import javax.transaction.Transactional;
-
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -26,6 +17,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.internal.SessionImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.cebi.entity.AuditHistory;
 import com.cebi.entity.Banks;
@@ -33,8 +25,6 @@ import com.cebi.entity.TellerMaster;
 import com.cebi.entity.ViewInfo;
 import com.cebi.service.AdminReportService;
 import com.cebi.utility.CebiConstant;
-import com.cebi.utility.ConnectionException;
-import com.rabbitmq.client.AMQP.Access.Request;
 
 @Repository
 public class LoginUserDaoImpl implements LoginDao {

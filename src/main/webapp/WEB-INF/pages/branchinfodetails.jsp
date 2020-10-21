@@ -331,7 +331,7 @@ display:none;
 					<div class="Edit" style="font-size: 28px;">
 						<span class="glyphicon glyphicon-pencil" style="font-size: 17px !important;"></span>&nbsp;Edit Information
 					</div><hr>
-					<form:form action="displaymodify" method="POST" commandName="ccdp010" id="reportForm">
+					<form:form action="displaymodify" method="POST" modelAttribute="ccdp010" id="reportForm">
 						
 						<div class="col-xs-4">
 						<label>Bank Cd</label><br>

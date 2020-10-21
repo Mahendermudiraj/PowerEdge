@@ -5,14 +5,13 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.hibernate.SessionFactory;
+import org.hibernate.boot.Metadata;
+import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Environment;
-import org.hibernate.metamodel.Metadata;
-import org.hibernate.metamodel.MetadataSources;
 
 import com.cebi.entity.Banks;
-import com.cebi.utility.AES;
 import com.cebi.utility.ConnectionException;
 
 public class HibernateUtil {

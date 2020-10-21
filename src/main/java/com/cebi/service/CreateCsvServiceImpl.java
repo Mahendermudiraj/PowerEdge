@@ -1,19 +1,15 @@
 package com.cebi.service;
 
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.transaction.Transactional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.cebi.dao.CreateCsvDao;
 import com.cebi.dao.StaticReportDaoImpl;
 import com.cebi.entity.QueryData;
-import com.cebi.entity.ReportQueueData;
-import com.cebi.rabbitqueue.Events;
 import com.cebi.utility.CebiConstant;
 
 @Service

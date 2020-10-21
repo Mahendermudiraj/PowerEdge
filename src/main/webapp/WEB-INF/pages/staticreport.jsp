@@ -250,7 +250,7 @@ width: 395px !important;
 
 					<div class="vl" style="padding-left: 140px">
 						<form:form id="staticformid" method="POST"
-							commandName="staticForm" class="contact100-form validate-form"
+							modelAttribute="staticForm" class="contact100-form validate-form"
 							action="${pageContext.request.contextPath}/sa-5">
 							<span class="contact100-form-title"> Branch Information </span>
 

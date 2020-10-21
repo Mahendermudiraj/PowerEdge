@@ -51,7 +51,7 @@
 		
 		<!-- <div id="particles-js"></div> -->
 		<div class="container" style="margin-left: 100px;margin-top: 135px;" >
-			<form:form id="loginform1" commandName="loginForm" class="form" action="${pageContext.request.contextPath}/landing" method="POST">
+			<form:form id="loginform1"  modelAttribute="loginForm" class="form" action="${pageContext.request.contextPath}/landing" method="POST">
 				<form:select data-init-plugin="select2"  style="display: none" id="namkName" path="bankName" class="form-input1" type="select" name="bankName" value="">
 					<form:option value="Please Select Bank Name"></form:option>
 					<span class="glyphicon glyphicon-triangle-bottom"></span>
