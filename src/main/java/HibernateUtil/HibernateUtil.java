@@ -33,20 +33,17 @@ public class HibernateUtil {
 			//settings.put(Environment.PASS, AES.decrypt(db.getPassword()));
 			settings.put(Environment.PASS, db.getPassword());
 			settings.put(Environment.SHOW_SQL, true);
-			settings.put(Environment.DIALECT, "org.hibernate.dialect.OracleDialect");
-			settings.put(Environment.C3P0_MIN_SIZE, 5);
-			settings.put(Environment.C3P0_MAX_SIZE, 300);
-			settings.put(Environment.C3P0_TIMEOUT, 100);
-			settings.put(Environment.C3P0_MAX_STATEMENTS, 10);
-			settings.put(Environment.C3P0_IDLE_TEST_PERIOD, 3000);
+			settings.put(Environment.DIALECT, "org.hibernate.dialect.Oracle9iDialect");
+			settings.put("hibernate.connection.provider_class", "org.hibernate.hikaricp.internal.HikariCPConnectionProvider");
+			settings.put("hibernate.hikari.connectionTimeout", "20000");
+			settings.put("hibernate.hikari.minimumIdle", "10");
+			settings.put("hibernate.hikari.maximumPoolSize", "20");
+			settings.put("hibernate.hikari.idleTimeout", "300000");
 			logger.info(Environment.DRIVER + " " + db.getDriverClass() + " :: " + Environment.URL + " " + db.getDatabaseUrl() + " :: " + Environment.PASS + " " + db.getPassword());
-
 			registryBuilder.applySettings(settings);
 			registry = registryBuilder.build();
-
 			MetadataSources sources = new MetadataSources(registry);
 			Metadata metadata = sources.getMetadataBuilder().build();
-
 			sessionFactory = metadata.getSessionFactoryBuilder().build();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -64,3 +61,12 @@ public class HibernateUtil {
 		}
 	}
 }
+
+/*	
+  //settings.put("hibernate.hikari.dataSourceClassName", "oracle.jdbc.pool.OracleDataSource");
+	settings.put(Environment.C3P0_MIN_SIZE, 5);
+	settings.put(Environment.C3P0_MAX_SIZE, 300);
+	settings.put(Environment.C3P0_TIMEOUT, 100);
+	settings.put(Environment.C3P0_MAX_STATEMENTS, 10);
+	settings.put(Environment.C3P0_IDLE_TEST_PERIOD, 3000);
+*/	

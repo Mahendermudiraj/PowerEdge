@@ -1,5 +1,7 @@
 package com.cebi.configuration;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Properties;
 
 import javax.sql.DataSource;
@@ -31,7 +33,8 @@ import com.cebi.entity.ReportQueueData;
 import com.cebi.entity.RequiredField;
 import com.cebi.entity.TellerMaster;
 import com.cebi.entity.ViewInfo;
-import com.cebi.utility.AES;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 
 @Configuration
 @EnableTransactionManagement
@@ -45,25 +48,38 @@ public class DbConfiguration {
 	public static PropertySourcesPlaceholderConfigurer propertyConfigInDev() {
 		return new PropertySourcesPlaceholderConfigurer();
 	}
-
+	
 	/*---------- session factory for static reports --------------*/
 
+	 public static HikariDataSource ds;
+	
 	@Bean(name = "staticReportbasicDataSource")
 	public DataSource mySqlStaticReportDataSource() throws Exception {
-		BasicDataSource dataSource = new BasicDataSource();
-		String appName = env.getProperty("application.static");
-		dataSource.setDriverClassName(env.getProperty(appName + ".driverClassName"));
-		dataSource.setUrl(env.getProperty(appName + ".databaseurl"));
-		dataSource.setUsername(env.getProperty(appName + ".username"));
-		dataSource.setPassword(env.getProperty(appName + ".password"));
-		//dataSource.setPassword(AES.decrypt(env.getProperty(appName + ".password")));
-		return dataSource;
+
+		        HikariConfig config = new HikariConfig();
+		        String appName = env.getProperty("application.static");
+		        config.setDriverClassName(env.getProperty(appName + ".driverClassName"));
+		        config.setJdbcUrl(env.getProperty(appName + ".databaseurl"));
+		        config.setUsername(env.getProperty(appName + ".username"));
+		        config.setPassword(env.getProperty(appName + ".password"));  
+		        config.addDataSourceProperty("cachePrepStmts", "true");
+		        config.addDataSourceProperty("prepStmtCacheSize", "250");
+		        config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
+
+		        HikariDataSource ds = new HikariDataSource(config);
+		
+		        return ds;
 	}
+	
+	public static Connection getConn() throws SQLException {
+        return ds.getConnection();
+    }
+	
 
 	@Bean(name = "staticReportSessionFactory")
-	public LocalSessionFactoryBean getStaticReportSessionFactory(@Qualifier("staticReportbasicDataSource") DataSource dataSource) {
+	public LocalSessionFactoryBean getStaticReportSessionFactory(@Qualifier("staticReportbasicDataSource") DataSource ds) {
 		LocalSessionFactoryBean localSessionFactoryBean = new LocalSessionFactoryBean();
-		localSessionFactoryBean.setDataSource(dataSource);
+		localSessionFactoryBean.setDataSource(ds);
 		localSessionFactoryBean.setAnnotatedClasses(BranchInformation.class, BranchInformationId.class, Ccdp.class, Ccdp010.class);
 		localSessionFactoryBean.setHibernateProperties(getHibernateProperties());
 		return localSessionFactoryBean;
@@ -82,20 +98,27 @@ public class DbConfiguration {
 	/* --------- session factory for prod ------------- */
 	@Bean(name = "basicDataSource")
 	public DataSource mySqlDataSource() throws Exception {
-		BasicDataSource dataSource = new BasicDataSource();
-		String appName = env.getProperty("application.name");
-		dataSource.setDriverClassName(env.getProperty(appName + ".driverClassName"));
-		dataSource.setUrl(env.getProperty(appName + ".databaseurl"));
-		dataSource.setUsername(env.getProperty(appName + ".username"));
-		dataSource.setPassword(env.getProperty(appName + ".password"));
-		//dataSource.setPassword(AES.decrypt(env.getProperty(appName + ".password")));
-		return dataSource;
+		
+		   HikariConfig config = new HikariConfig();
+	        String appName = env.getProperty("application.name");
+	        config.setDriverClassName(env.getProperty(appName + ".driverClassName"));
+	        config.setJdbcUrl(env.getProperty(appName + ".databaseurl"));
+	        config.setUsername(env.getProperty(appName + ".username"));
+	        config.setPassword(env.getProperty(appName + ".password"));  
+	        config.addDataSourceProperty("cachePrepStmts", "true");
+	        config.addDataSourceProperty("prepStmtCacheSize", "250");
+	        config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
+
+	        HikariDataSource ds = new HikariDataSource(config);
+	
+	        return ds;
+		
 	}
 
 	@Bean(name = "sessionFactory")
-	public LocalSessionFactoryBean getSessionFactory(@Qualifier("basicDataSource") DataSource dataSource) {
+	public LocalSessionFactoryBean getSessionFactory(@Qualifier("basicDataSource") DataSource ds) {
 		LocalSessionFactoryBean localSessionFactoryBean = new LocalSessionFactoryBean();
-		localSessionFactoryBean.setDataSource(dataSource);
+		localSessionFactoryBean.setDataSource(ds);
 		localSessionFactoryBean.setAnnotatedClasses(PreDefineReport.class,ReportQueueData.class, QueryData.class, ViewInfo.class, ApplicationLabel.class, TellerMaster.class, RequiredField.class, AuditHistory.class, QueryData.class, Banks.class);
 		localSessionFactoryBean.setHibernateProperties(getHibernateProperties());
 		return localSessionFactoryBean;
@@ -106,12 +129,11 @@ public class DbConfiguration {
 		Properties properties = new Properties();
 		properties.put("hibernate.show_sql", "true");
 		properties.put("hibernate.dialect", env.getProperty("Banc-Edge.dialect"));
-		properties.put("hibernate.c3p0.min_size", 1);
-		properties.put("hibernate.c3p0.max_size", 300);
-		properties.put("hibernate.c3p0.timeout", 50);
-		properties.put("hibernate.c3p0.max_statements", 5);
-		properties.put("hibernate.c3p0.hibernate.c3p0.idle_test_period", 3000);
-		//properties.put("hibernate.temp.use_jdbc_metadata_defaults", "false");
+		properties.put("hibernate.hikari.connectionTimeout", "20000");
+		properties.put("hibernate.hikari.minimumIdle", "10");
+		properties.put("hibernate.hikari.maximumPoolSize", "20");
+		properties.put("hibernate.hikari.idleTimeout", "300000");
+		properties.put("hibernate.temp.use_jdbc_metadata_defaults", "false");
 		properties.put("hibernate.enable_lazy_load_no_trans",true);
 		return properties;
 	}
@@ -123,3 +145,35 @@ public class DbConfiguration {
 	}
 
 }
+
+/*BasicDataSource dataSource = new BasicDataSource();
+//HikariDataSource HdataSource = new HikariDataSource();
+String appName = env.getProperty("application.static");
+dataSource.setDriverClassName(env.getProperty(appName + ".driverClassName"));
+dataSource.setUrl(env.getProperty(appName + ".databaseurl"));
+dataSource.setUsername(env.getProperty(appName + ".username"));
+dataSource.setPassword(env.getProperty(appName + ".password"));
+//dataSource.setPassword(AES.decrypt(env.getProperty(appName + ".password")));
+
+	
+		BasicDataSource dataSource = new BasicDataSource();
+		//HikariDataSource HdataSource = new HikariDataSource();
+		String appName = env.getProperty("application.name");
+		dataSource.setDriverClassName(env.getProperty(appName + ".driverClassName"));
+		dataSource.setUrl(env.getProperty(appName + ".databaseurl"));
+		dataSource.setUsername(env.getProperty(appName + ".username"));
+		dataSource.setPassword(env.getProperty(appName + ".password"));
+		//dataSource.setPassword(AES.decrypt(env.getProperty(appName + ".password")));
+		return dataSource;
+		
+		 /* properties.put("hibernate.connection.provider_class", "org.hibernate.hikaricp.internal.HikariCPConnectionProvider");
+		properties.put("hibernate.hikari.dataSourceClassName", "com.mysql.cj.jdbc.mysqlDataSource");
+	    properties.put("hibernate.c3p0.min_size", 1);
+		properties.put("hibernate.c3p0.max_size", 300);
+		properties.put("hibernate.c3p0.timeout", 50);
+		properties.put("hibernate.c3p0.max_statements", 5);
+		properties.put("hibernate.c3p0.hibernate.c3p0.idle_test_period", 3000);
+		
+		*
+		*/
+	
