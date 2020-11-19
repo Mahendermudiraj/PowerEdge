@@ -62,9 +62,9 @@ public class DbConfiguration {
 		        config.setJdbcUrl(env.getProperty(appName + ".databaseurl"));
 		        config.setUsername(env.getProperty(appName + ".username"));
 		        config.setPassword(env.getProperty(appName + ".password"));  
-		        config.addDataSourceProperty("cachePrepStmts", "true");
-		        config.addDataSourceProperty("prepStmtCacheSize", "250");
-		        config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
+		        config.addDataSourceProperty("cachePrepStmts", true);
+		        config.addDataSourceProperty("prepStmtCacheSize", 250);
+		        config.addDataSourceProperty("prepStmtCacheSqlLimit", 2048);
 
 		        HikariDataSource ds = new HikariDataSource(config);
 		
@@ -131,7 +131,7 @@ public class DbConfiguration {
 		properties.put("hibernate.dialect", env.getProperty("Banc-Edge.dialect"));
 		properties.put("hibernate.hikari.connectionTimeout", "20000");
 		properties.put("hibernate.hikari.minimumIdle", "10");
-		properties.put("hibernate.hikari.maximumPoolSize", "20");
+		properties.put("hibernate.hikari.maximumPoolSize", "120");
 		properties.put("hibernate.hikari.idleTimeout", "300000");
 		properties.put("hibernate.temp.use_jdbc_metadata_defaults", "false");
 		properties.put("hibernate.enable_lazy_load_no_trans",true);

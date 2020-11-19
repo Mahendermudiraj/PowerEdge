@@ -187,27 +187,21 @@ function addMultipleCriteria(data, DD1, DD2, ipVal, alias) {
 		newdata = data + "\n" + " AND" + " " + alias + DD1 + " " + DD2 + " "
 				+ "'%" + ipVal + "%'";
 	}else if (isCriteriaNumber(DD1) && $('#s2').val() == 'between') {
-		newdata = data + "\n" + " AND" + " " + alias + DD1 + " BETWEEN "
-				+ $('#from').val() + " AND " + $('#to').val();
+		newdata = data + "\n" + " AND" + " " + alias + DD1 + " BETWEEN " + $('#from').val() + " AND " + $('#to').val();
 	} else if (isCriteriaDate(DD1) && $('#s2').val() == 'Fromto') {
 
-		var tablename1 = $("#table_select option:selected").text().startsWith(
-				'NV_');
-		var tablename2 = $("#table_select option:selected").text().startsWith(
-		'Loan');
+		var tablename1 = $("#table_select option:selected").text().startsWith('NV_');
+		var tablename2 = $("#table_select option:selected").text().startsWith('Loan');
 		var fromdate='';
 		var todate='';
 		if (tablename1 || tablename2) {
-			  fromdate = " to_char(to_date(" + "' " + $('#fromdate').val()
-					+ " '" + ",'DD-mm-YY'),'J')-2415020 ";
-			  todate = " to_char(to_date(" + "' " + $('#todate').val() + "' "
-					+ ",'DD-mm-YY'),'J')-2415020 ";
+			  fromdate = " to_char(to_date(" + "' " + $('#fromdate').val() + " '" + ",'DD-mm-YY'),'J')-2415020 ";
+			  todate = " to_char(to_date(" + "' " + $('#todate').val() + "' " + ",'DD-mm-YY'),'J')-2415020 ";
 		}else{
-			fromdate= $('#from').val();
+			fromdate= $('#fromdate').val();
 			todate= $('#todate').val();
 		}
-		newdata = data + "\n" + " AND" + " " + alias + DD1 + " BETWEEN " + " "
-				+ fromdate + " " + " AND " + " " + todate + " ";
+		newdata = data + "\n" + " AND" + " " + alias + DD1 + " BETWEEN " + "'" + $('#fromdate').val() + "'" + " AND " + "'" +$('#todate').val() + "'";
 	} else if (isCriteriaNumber(DD1) && $('#s2').val() == 'IN') {
 		newdata = data + "\n" + " AND" + " " + alias + DD1 + " IN " + "("
 				+ ipVal + ")";

@@ -106,7 +106,7 @@ public class AdminReportServiceImpl implements AdminReportService {
     @Override
     public Object buildSqlQuery(QueryData getTableData, String bank, TellerMaster tellerMaster) throws Exception {
 	logger.info("----------------buildSqlQuery----------------- " + getTableData.getTable());
-	System.out.println("----------------buildSqlQuery----------------- " + getTableData.getTable());
+	//System.out.println("----------------buildSqlQuery----------------- " + getTableData.getTable());
 	String variable = "";
 	String countValue = staticReportDaoImpl.checkQueryType(getTableData.getTable());
 	if ("0".equalsIgnoreCase(countValue)) {

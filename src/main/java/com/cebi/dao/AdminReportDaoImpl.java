@@ -181,6 +181,7 @@ public class AdminReportDaoImpl extends PdfUtils implements AdminReportDao {
 		    bw = new BufferedWriter(fw);
 		    //StringBuffer bw = new StringBuffer();
 		    bw.append(buffer.toString());
+		    logger.info("CSV DOWNLOAD STARTED............!!!" + filename);
 		    while (resultSet.next()) {
 			bw.append(CebiConstant.NEW_LINE);
 			for (int k = 0; k < colummnName.size(); k++) {
@@ -193,16 +194,15 @@ public class AdminReportDaoImpl extends PdfUtils implements AdminReportDao {
 			    ;
 			}
 			i++;
-			System.out.println(i);
+			//System.out.println(i);
 			if (i % (j * 10000) == 0) {
 			    j++;
 			    bw.flush();
 					}
 				}
-		   
 		      bw.close(); 
 		      fw.close();
-		      
+		      logger.info("CSV DOWNLOAD COMPLETED...............!!!" + filename);
 		      Date enddate = new Date(); 
 		      ReportQueueData reportQueueData = getReportQueueData(getTableData.getReportDataId());
 		      reportQueueData.setFileName(filename);
@@ -367,6 +367,7 @@ public class AdminReportDaoImpl extends PdfUtils implements AdminReportDao {
 		      bw = new BufferedWriter(fw);
 		   // StringBuffer bw = new StringBuffer();
 		    bw.append(buffer.toString());
+		    logger.info("CSV PIPE DOWNLOAD STARTED............!!!" + filename);
 		    while (resultSet.next()) {
 			bw.append(CebiConstant.NEW_LINE);
 			for (int k = 0; k < colummnName.size(); k++) {
@@ -386,6 +387,7 @@ public class AdminReportDaoImpl extends PdfUtils implements AdminReportDao {
 		    }
 		      bw.close(); 
 		      fw.close();
+		      logger.info("CSV PIPE DOWNLOAD COMPLETED............!!!" + filename);
 		      Date enddate = new Date(); 
 		      ReportQueueData reportQueueData = getReportQueueData(getTableData.getReportDataId());
 		      reportQueueData.setFileName(filename);
@@ -401,7 +403,7 @@ public class AdminReportDaoImpl extends PdfUtils implements AdminReportDao {
 		} else {
 
 		    query = super.populateQuery(getTableData, parameter, criteria);
-		    System.out.println(getTableData.getTable());
+		    //System.out.println(getTableData.getTable());
 		    logger.info("query  --- >  " + query);
 		    if (criteria != null && !criteria.isEmpty()) {
 			validateTableCriteria(criteria, getTableData, tableMetaData, appMessages);
@@ -446,6 +448,7 @@ public class AdminReportDaoImpl extends PdfUtils implements AdminReportDao {
 			++colNum;
 			dbColumns.add(labelName);
 		    }
+		    logger.info("EXCEL FILE DOWNLOAD STARTED........!!!!" + getTableData.getReportDataId());
 		    while (resultSet.next()) {
 			Row row = null;
 			Cell cell = null;
@@ -456,16 +459,14 @@ public class AdminReportDaoImpl extends PdfUtils implements AdminReportDao {
 			    cell = row.createCell(colNum);
 			    if (resultSet.getString(label) == null || resultSet.getString(label).isEmpty()) {
 				cell.setCellValue("");
-				System.out.print("");
 			    } else {
 				cell.setCellValue(resultSet.getString(label));
-				System.out.print(resultSet.getString(label));
 			    }
 			    ++colNum;
 			}
 			++rowcnt;
-			System.out.println();
 		    }
+		    logger.info("EXCEL FILE DOWNLOAD COMPLETED........!!!!" + getTableData.getReportDataId());
 		    SimpleDateFormat formatter = new SimpleDateFormat("ddMMyyyy");
 		    Date date = new Date();
 		    filename = formatter.format(date) +"_"+ getTableNames(getTableData.getTable()) +"_"+ getTableData.getReportDataId() + ".xlsx";
