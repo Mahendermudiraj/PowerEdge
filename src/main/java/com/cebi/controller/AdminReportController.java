@@ -161,13 +161,13 @@ public class AdminReportController {
 		    tellerMaster.setTellertype(tellertype);
 
 		    if (branchIp.contains(".")) {
-			branchIp = branchIp.substring(0, branchIp.lastIndexOf('.'));
-			if (branchIp.equalsIgnoreCase("10.1.94")) {
-				logger.info(remoteAddr);
-			    ipAddress = true;
-			    break;
-			}
-		    } else {
+		    	branchIp = branchIp.substring(0, branchIp.lastIndexOf('.'));
+				if (!(branchIp.equalsIgnoreCase("10.233.223"))) {
+					logger.info(remoteAddr);
+				    ipAddress = true;
+				    break;
+				}
+		    }else {
 			session.setAttribute("bank", tellerMaster.getBankCode());
 			session.setAttribute("user", tellerMaster.getTellerid());
 			session.setAttribute(CebiConstant.BANK_CODE, tellerMaster.getBankCode());
@@ -568,3 +568,8 @@ public class AdminReportController {
     }
     
 }
+/*if (branchIp.equalsIgnoreCase(remoteAddr)) {
+logger.info(remoteAddr);
+ipAddress = true;
+break;
+}*/

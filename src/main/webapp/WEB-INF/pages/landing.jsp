@@ -45,7 +45,8 @@ display:none;
 			<div class="col-lg-12">
 				<h3 class="page-header" style="margin-top: 10px">
 					Dashboard
-					<p style="float: right ; margin-top: 8px;color:black;">${bnkname}</p>
+					<%-- <p style="float: right ; margin-top: 8px;color:black;">${bnkname}</p> --%>
+					<p style="float: right ; margin-top: 8px;color:black;">${sessionScope.bank}</p>
 				</h3>
 			</div>
 		</div>
