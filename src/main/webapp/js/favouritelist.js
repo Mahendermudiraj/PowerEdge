@@ -71,7 +71,51 @@
 			});
 		}
 	}
+	$('.checkid').click(function(){
+		 var valu="";
+		 var valu1="";
+		 valu=$(this).val();
+		 if ($(this).is(":checked")) {
+			 $("input[id='checkid2']:checkbox").each(function(){
+				 valu1=$(this).val();
+				 if(valu == valu1) {
+					 $(this).prop('checked',true);
+				 }
+			});  
+		 } else {
+			 $("input[id='checkid2']:checkbox").each(function(){
+				 valu1=$(this).val();
+				 if(valu == valu1) {
+					 $(this).prop('checked',false);
+				 }
+			});
+		 }
+		 
+	});
+	
+	// check box select 
 
+	$('.checkid1').click(function(){
+		 var valu="";
+		 var valu1="";
+		 valu=$(this).val();
+		 if ($(this).is(":checked")) {
+			 $("input[id='checkid1']:checkbox").each(function(){
+				 valu1=$(this).val();
+				 if(valu == valu1){
+					 $(this).prop('checked',true);
+				 } 
+			});  
+		 } else {
+			 $("input[id='checkid1']:checkbox").each(function(){
+				 valu1=$(this).val();
+				 if(valu == valu1){
+					 $(this).prop('checked',false);
+				 } 
+			});  
+		 }
+		  
+	});
 	
 	function filterColumns(response) {
 	var parameter=localStorage.getItem("parameter");

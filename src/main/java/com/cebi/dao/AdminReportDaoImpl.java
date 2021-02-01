@@ -30,13 +30,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
@@ -111,8 +110,8 @@ public class AdminReportDaoImpl extends PdfUtils implements AdminReportDao {
 	try {
 	    session = cebiConstant.getCurrentSession(bank);
 	    connection = ((SessionImpl) session).connection();
-	    parameter = getTableData.getParameter().trim().length() > 0 ? getTableData.getParameter() : "";
-	    criteria = getTableData.getQuery().trim().length() > 0 ? getTableData.getQuery() : "";
+	    parameter = getTableData.getParameter().trim().length() > 0 ? getTableData.getParameter() : " ";
+	    criteria = getTableData.getQuery().trim().length() > 0 ? getTableData.getQuery() : " ";
 	    connection.setAutoCommit(false);
 	    labels = applicationLabelService.retrieveAllLabels();
 	    SimpleDateFormat formatter1 = new SimpleDateFormat("ddMMyyyy HH:mm:ss");
@@ -412,46 +411,76 @@ public class AdminReportDaoImpl extends PdfUtils implements AdminReportDao {
 			    ResultSet.CONCUR_READ_ONLY);
 		    statement.setFetchSize(5000);
 		    int colNum = 0;
-		    int rowcnt = 1;
+		    int rowcnt = 4;
 		    resultSet = statement.executeQuery(query);
 		    List<String> dbColumns = new ArrayList<String>();
 		    ResultSetMetaData rsmd = resultSet.getMetaData();
 		    int columnCount = rsmd.getColumnCount();
-		   // ByteArrayOutputStream byteq = new ByteArrayOutputStream();
 		    BufferedOutputStream bos=null;
-		    Workbook workbook = new XSSFWorkbook(); // new 
-							    // HSSFWorkbook()
-							    // for generating
-							    // `.xls` file
+		   
+		    // Support 10lack records up to  
+		    SXSSFWorkbook wb = new SXSSFWorkbook();        
+		    Sheet sheet = wb.createSheet();
+		    CellStyle cellStyle = wb.createCellStyle();
+		    cellStyle.setWrapText(true);
+		    Row row = sheet.createRow(0);
+		    Cell cell = row.createCell(0);
+		    
+		    //sheet.addMergedRegion(new CellRangeAddress(firstRow, lastRow, firstCol, lastCol)  
+		    sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 10));
+		    Font font = wb.createFont();
+		    font.setBoldweight(XSSFFont.BOLDWEIGHT_BOLD);
+		    cellStyle.setFont(font);
+		    
+		    //Set bankName
+		    cell.setCellStyle(cellStyle);
+		    cellStyle.setAlignment(CellStyle.ALIGN_CENTER);
+		    cell.setCellValue(getBankName(bank));
+		    
+		    //Set tableName
+		    row = sheet.createRow(1);
+		    cell = row.createCell(0);
+		    //sheet.addMergedRegion(new CellRangeAddress(firstRow, lastRow, firstCol, lastCol)  
+		    sheet.addMergedRegion(new CellRangeAddress(1,1,0,10));
+		    cell.setCellStyle(cellStyle);
+		    cellStyle.setAlignment(CellStyle.ALIGN_CENTER);
+		    cell.setCellValue(getTableNames(getTableData.getTable()));
+		    
+		    //ReportId,ReportDate,Time
+		    row = sheet.createRow(2);
+		    cell = row.createCell(0);
+		    sheet.addMergedRegion(new CellRangeAddress(2,2,0,10));
+		    cell.setCellStyle(cellStyle);
+		    cellStyle.setAlignment(CellStyle.ALIGN_CENTER);
+		    SimpleDateFormat sdf =  new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");  
+		    String format = sdf.format(new Date());
+		    String datee = format.substring(0, 10);
+		    String time = format.substring(11, 19);
+		    cell.setCellValue("ReportId: "+getTableData.getReportDataId()+CebiConstant.SPACE+"ReportDate:"+datee+CebiConstant.SPACE+"Time:"+time);
 
-		    /*
-		     * CreationHelper helps us create instances of various
-		     * things like DataFormat, Hyperlink, RichTextString etc, in
-		     * a format (HSSF, XSSF) independent way
-		     */
-		    CreationHelper createHelper = workbook.getCreationHelper();
-		    Font headerFont = workbook.createFont();
-		    headerFont.setFontHeightInPoints((short) 14);
-		    headerFont.setColor(IndexedColors.RED.getIndex());
 
-		    // Create a CellStyle with the font
+		   /* // Create a CellStyle with the font
 		    CellStyle headerCellStyle = workbook.createCellStyle();
 		    headerCellStyle.setFont(headerFont);
 		    Sheet sheet = workbook.createSheet("Employee");
-		    Row headerRow = sheet.createRow(0);
+		    Row headerRow = sheet.createRow(0);*/
+		    
 		    dbColumns = new ArrayList<String>();
+		    row = sheet.createRow(3);
 		    for (int i = 1; i <= columnCount; i++) {
 			String labelName = rsmd.getColumnName(i);
-			Cell cell = headerRow.createCell(colNum);
-			cell.setCellStyle(headerCellStyle);
+			cell = row.createCell(colNum);
+			//cell = headerRow.createCell(colNum);
+			cell.setCellStyle(cellStyle);
 			cell.setCellValue(labelName);
 			++colNum;
 			dbColumns.add(labelName);
 		    }
+		    
 		    logger.info("EXCEL FILE DOWNLOAD STARTED........!!!!" + getTableData.getReportDataId());
 		    while (resultSet.next()) {
-			Row row = null;
-			Cell cell = null;
+			//Row row = null;
+			//Cell cell = null;
 			colNum = 0;
 			row = sheet.createRow(rowcnt);
 			for (String label : dbColumns) {
@@ -472,7 +501,7 @@ public class AdminReportDaoImpl extends PdfUtils implements AdminReportDao {
 		    filename = formatter.format(date) +"_"+ getTableNames(getTableData.getTable()) +"_"+ getTableData.getReportDataId() + ".xlsx";
 			String FileLoc = MappingConstant.BANK_REPORT_LOCATION +bank+"/"+filename;
 			bos = new BufferedOutputStream(new FileOutputStream(FileLoc));
-			workbook.write(bos);
+			wb.write(bos);
 			// workbook.write(byteq);
 		    // byte[] outArray = null;
 		    // outArray = byteq.toByteArray();
@@ -783,4 +812,34 @@ public class AdminReportDaoImpl extends PdfUtils implements AdminReportDao {
 		return executeUpdate;
 	}
 
+	@Override
+	public boolean deleteviews(QueryData qrydata) {
+				int result=0;
+				Query query = sessionFactory.getCurrentSession().createSQLQuery("delete from cesys003 WHERE id in('"+qrydata.getParameter()+"')");
+				result=query.executeUpdate();
+				if(result>0){
+			    	return true;
+			} else {
+				return false;
+			}
+		}
+	
 }
+
+
+// ByteArrayOutputStream byteq = new ByteArrayOutputStream();
+/*BufferedOutputStream bos=null;
+Workbook workbook = new XSSFWorkbook();*/ // new 
+				    // HSSFWorkbook()
+				    // for generating
+				    // `.xls` file
+
+/*
+ * CreationHelper helps us create instances of various
+ * things like DataFormat, Hyperlink, RichTextString etc, in
+ * a format (HSSF, XSSF) independent way
+ */
+/* CreationHelper createHelper = workbook.getCreationHelper();
+Font headerFont = workbook.createFont();
+headerFont.setFontHeightInPoints((short) 14);
+headerFont.setColor(IndexedColors.RED.getIndex());*/

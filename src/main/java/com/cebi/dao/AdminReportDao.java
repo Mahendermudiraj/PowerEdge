@@ -53,4 +53,6 @@ public interface AdminReportDao {
 
 	public int deleteFavRec(int id);
 
+	public boolean deleteviews(QueryData qrydata);
+
 }

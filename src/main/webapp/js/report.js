@@ -69,8 +69,9 @@ function addToFilter() {
 		if (DD1 == 'ACCT_NO') {
 			var temp = $("#iptext").val();
 			if(!($("#s2 option:selected").text() == 'Middle Like'))
-			ipVal = temp.substring(0, temp.length - 1).pad('0', 16);
-			else
+			//ipVal = temp.substring(0, temp.length - 1).pad('0', 16);
+				ipVal = temp.substring(0, temp.length);
+				else
 				ipVal=temp;
 		} else
 			ipVal = $("#iptext").val();
@@ -525,6 +526,7 @@ function submitCf(e) {
 						closeModal();
 						var err = xhr.responseText;
 						alert("Session Time Out");
+						window.location = "logout.html";
 						if (err.toLowerCase().indexOf("session_timed_out") >= 0) {
 							window.location = "login.html?statusCheck=SessionExpired";
 						}
@@ -802,6 +804,7 @@ function retriveColumnAjaxCall(tablename) {
 				data : tablename,
 				contentType : "application/json; charset=utf-8",
 				error : function(xhr, status, error) {
+					window.location = "logout.html";
 					closeModal();
 				},
 				beforeSend : function() {
