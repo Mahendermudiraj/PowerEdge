@@ -52,26 +52,41 @@ public class StaticReportAccServiceImpl implements StaticReportAccService {
 		PreparedStatement prepareStatement = null;
 		ResultSet resultSet = null;
 		Session session = null;
-		staticReports.setAccNum(staticReports.getAccNum().trim().substring(0, staticReports.getAccNum().length() - 1));
+		/*staticReports.setAccNum(staticReports.getAccNum().trim().substring(0, staticReports.getAccNum().length() - 1));
 		staticReports.setAccNum(populateData(staticReports.getAccNum(), 16, 0));
 		String query = MappingConstant.QUERYSCRIPT.replaceAll("XXXXXX",
 				staticReports.getAccNum());
 		query = query.replaceAll("ZZZZZZ", staticReports.getFrDate());
-		query = query.replaceAll("YYYYYY", staticReports.getToDate());
+		query = query.replaceAll("YYYYYY", staticReports.getToDate());*/
+		String query=null;
 		List<StaticReports> data = new ArrayList<>();
 		try {
 			session = cebiConstant.getCurrentSession(bankCode);
 			connection = ((SessionImpl) session).connection();
+		    String accNum = staticReports.getAccNum().trim().substring(0, staticReports.getAccNum().length());
+		    staticReports.setAccNum(staticReports.getAccNum().trim().substring(0, staticReports.getAccNum().length() - 1));
+		    String accNum2 = staticReports.getAccNum();
+		    String qry="select checkdigit.generate("+accNum2+") from dual";
+		    prepareStatement = connection.prepareStatement(qry);
+		    ResultSet rs = prepareStatement.executeQuery();
+		    int int2=0;
+		    while (rs.next()) {
+		    int2 = rs.getInt(1);
+		    }                        
+		    String lastdigit = accNum.substring(accNum.length()-1);
+		    int accNumlastdigit = Integer.parseInt(lastdigit);
+		    if(accNumlastdigit==int2){
+		    staticReports.setAccNum(populateData(staticReports.getAccNum(), 16, 0));
+		    query = MappingConstant.QUERYSCRIPT.replaceAll("XXXXXX",staticReports.getAccNum());
+		    query = query.replaceAll("ZZZZZZ", staticReports.getFrDate());
+		    query = query.replaceAll("YYYYYY", staticReports.getToDate());
+		    logger.info(query);
 			connection.setAutoCommit(false);
-			SimpleDateFormat formatter = new SimpleDateFormat(
-					"dd/MM/yyyy HH:mm:ss");
+			SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 			Date date = new Date();
 			String[] timDate = formatter.format(date).split(" ");
-			
 			prepareStatement = connection.prepareStatement(query);
 			resultSet = prepareStatement.executeQuery();
-			
-			
 			while (resultSet.next()) {
 				StaticReports strpo = new StaticReports();
 				strpo.setAccNum(resultSet.getString("ACCT_NO"));
@@ -141,7 +156,7 @@ public class StaticReportAccServiceImpl implements StaticReportAccService {
 						staticReport.setMobNO("XXXXXXXXXX");
 				}
 			}
-
+		                       }
 		} catch (Exception e) {
 			TableMetaData tableDataErr = new TableMetaData();
 			tableDataErr.setName("Error : " + e.getMessage());
